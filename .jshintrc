@@ -1,11 +1,11 @@
 {
+  "debug": true,
   "globalstrict": true,
   "curly": true,
   "eqeqeq": true,
   "immed": true,
   "noempty": true,
   "noarg": true,
-  "quotmark": "single",
   "undef": true,
   "eqnull": true,
   "freeze": true,
@@ -14,6 +14,7 @@
   "latedef": false,
   "trailing": true,
   "globals": {
+    "Image": true,
     "angular": true,
     "require": true,
     "console": true,
