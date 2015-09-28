@@ -2,10 +2,10 @@
  * ngImgCrop v0.3.2
  * https://github.com/alexk111/ngImgCrop
  *
- * Copyright (c) 2014 Alex Kaul
+ * Copyright (c) 2015 Alex Kaul
  * License: MIT
  *
- * Generated at Wednesday, December 3rd, 2014, 3:54:12 PM
+ * Generated at Monday, September 28th, 2015, 11:14:39 AM
  */
 (function() {
 'use strict';
@@ -335,7 +335,7 @@ crop.factory('cropAreaSquare', ['cropArea', function(CropArea) {
     return res;
   };
 
-  CropAreaSquare.prototype.processMouseDown=function(mouseDownX, mouseDownY) {
+  CropAreaSquare.prototype.processMouseDown=function(mouseDownX, mouseDownY) {    
     var isWithinResizeCtrl=this._isCoordWithinResizeCtrl([mouseDownX,mouseDownY]);
     if (isWithinResizeCtrl>-1) {
       this._areaIsDragging = false;
@@ -375,6 +375,7 @@ crop.factory('cropAreaSquare', ['cropArea', function(CropArea) {
 
   return CropAreaSquare;
 }]);
+
 
 crop.factory('cropArea', ['cropCanvas', function(CropCanvas) {
   var CropArea = function(ctx, events) {
@@ -1396,7 +1397,8 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
     // Object Pointers
     var ctx=null,
         image=null,
-        theArea=null;
+        theArea=null,
+        cropCoords=null;
 
     // Dimensions
     var minCanvasDims=[100,100],
@@ -1531,14 +1533,47 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
       }
     };
 
+    /*
+      For future reference: this is where the ACTUAL crop happens.
+    */
+
     this.getResultImageDataURI=function() {
       var temp_ctx, temp_canvas;
       temp_canvas = angular.element('<canvas></canvas>')[0];
       temp_ctx = temp_canvas.getContext('2d');
       temp_canvas.width = resImgSize;
       temp_canvas.height = resImgSize;
+
+      var left,top,bottom,right = 0;
+      var sx, sy, swidth, sheight = 0;
+
       if(image!==null){
-        temp_ctx.drawImage(image, (theArea.getX()-theArea.getSize()/2)*(image.width/ctx.canvas.width), (theArea.getY()-theArea.getSize()/2)*(image.height/ctx.canvas.height), theArea.getSize()*(image.width/ctx.canvas.width), theArea.getSize()*(image.height/ctx.canvas.height), 0, 0, resImgSize, resImgSize);
+
+        sx = left = (theArea.getX()-theArea.getSize()/2)*(image.width/ctx.canvas.width);
+        swidth = theArea.getSize()*(image.width/ctx.canvas.width);
+        right = swidth + sx;
+
+        sy = top = (theArea.getY()-theArea.getSize()/2)*(image.height/ctx.canvas.height);
+        sheight = theArea.getSize()*(image.height/ctx.canvas.height);
+        bottom = sheight + sy;
+
+        this.cropCoords = {
+          left: left,
+          top: top,
+          bottom: bottom,
+          right: right
+        };
+
+        temp_ctx.drawImage(
+          image,
+          sx,
+          sy,
+          swidth,
+          sheight,
+          0,
+          0,
+          resImgSize,
+          resImgSize);
       }
       if (resImgQuality!==null ){
         return temp_canvas.toDataURL(resImgFormat, resImgQuality);
@@ -1763,6 +1798,7 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
     scope: {
       image: '=',
       resultImage: '=',
+      cropCoords: '=',
 
       changeOnFly: '=',
       areaType: '@',
@@ -1796,6 +1832,7 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
           storedResultImage=resultImage;
           if(angular.isDefined(scope.resultImage)) {
             scope.resultImage=resultImage;
+            scope.cropCoords = cropHost.cropCoords;
           }
           scope.onChange({$dataURI: scope.resultImage});
         }
@@ -1876,4 +1913,5 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
     }
   };
 }]);
+
 }());
