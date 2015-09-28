@@ -26,7 +26,7 @@
     }
   </style>
 </head>
-<body ng-controller="Ctrl">
+<body ng-controller="Ctrl as ctrl">
   <div>
     <label><input type="checkbox" ng-model="enableCrop" ng-init="enableCrop=true"/> Add ngImgCrop to Page</label>
   </div>
@@ -82,6 +82,7 @@
   <div ng-if="enableCrop" class="cropArea" ng-class="{'big':size=='big', 'medium':size=='medium', 'small':size=='small'}">
     <img-crop image="imageDataURI"
               result-image="$parent.resImageDataURI"
+              crop-coords="ctrl.moo"
               change-on-fly="changeOnFly"
               area-type="{{type}}"
               area-min-size="selMinSize"
@@ -95,6 +96,7 @@
     ></img-crop>
               <!--aspect-ratio="aspectRatio"-->
   </div>
+  moo:{{ctrl.moo}}
 
   <div style="text-align:center">
     <h3>Result</h3>
@@ -106,6 +108,7 @@
   <script type="text/javascript">
     angular.module('app', ['ngImgCrop'])
       .controller('Ctrl', function($scope) {
+
         $scope.size='small';
         $scope.type='circle';
         $scope.imageDataURI='';
@@ -114,8 +117,12 @@
         $scope.resImgQuality=1;
         $scope.selMinSize=100;
         $scope.resImgSize=200;
+
+        this.moo = {};
+
         //$scope.aspectRatio=1.2;
-        $scope.onChange=function($dataURI) {
+        $scope.onChange=function() {
+          console.log($scope.moo);
           console.log('onChange fired');
         };
         $scope.onLoadBegin=function() {
