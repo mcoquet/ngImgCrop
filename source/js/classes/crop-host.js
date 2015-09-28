@@ -28,7 +28,8 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
     // Object Pointers
     var ctx=null,
         image=null,
-        theArea=null;
+        theArea=null,
+        cropCoords=null;
 
     // Dimensions
     var minCanvasDims=[100,100],
@@ -163,6 +164,9 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
       }
     };
 
+    /*
+      For future reference: this is where the ACTUAL crop happens.
+    */
 
     this.getResultImageDataURI=function() {
       var temp_ctx, temp_canvas;
@@ -170,8 +174,37 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
       temp_ctx = temp_canvas.getContext('2d');
       temp_canvas.width = resImgSize;
       temp_canvas.height = resImgSize;
+
+      var left,top,bottom,right = 0;
+      var sx, sy, swidth, sheight = 0;
+
       if(image!==null){
-        temp_ctx.drawImage(image, (theArea.getX()-theArea.getSize()/2)*(image.width/ctx.canvas.width), (theArea.getY()-theArea.getSize()/2)*(image.height/ctx.canvas.height), theArea.getSize()*(image.width/ctx.canvas.width), theArea.getSize()*(image.height/ctx.canvas.height), 0, 0, resImgSize, resImgSize);
+
+        sx = left = (theArea.getX()-theArea.getSize()/2)*(image.width/ctx.canvas.width);
+        swidth = theArea.getSize()*(image.width/ctx.canvas.width);
+        right = swidth + sx;
+
+        sy = top = (theArea.getY()-theArea.getSize()/2)*(image.height/ctx.canvas.height);
+        sheight = theArea.getSize()*(image.height/ctx.canvas.height);
+        bottom = sheight + sy;
+
+        this.cropCoords = {
+          left: left,
+          top: top,
+          bottom: bottom,
+          right: right
+        };
+
+        temp_ctx.drawImage(
+          image,
+          sx,
+          sy,
+          swidth,
+          sheight,
+          0,
+          0,
+          resImgSize,
+          resImgSize);
       }
       if (resImgQuality!==null ){
         return temp_canvas.toDataURL(resImgFormat, resImgQuality);
