@@ -14,6 +14,7 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
       resultImageSize: '=',
       resultImageFormat: '@',
       resultImageQuality: '=',
+      aspectRatio: '=',
 
       onChange: '&',
       onLoadBegin: '&',
@@ -28,8 +29,12 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
       // Init Events Manager
       var events = scope.events;
 
+      var options = {
+        aspectRatio: scope.aspectRatio
+      };
+
       // Init Crop Host
-      var cropHost=new CropHost(element.find('canvas'), {}, events);
+      var cropHost=new CropHost(element.find('canvas'), options, events);
 
       // Store Result Image to check if it's changed
       var storedResultImage;

@@ -40,16 +40,16 @@
     Area type:
     <label><input type="radio" ng-model="type" value="circle" /> Circle</label>
     <label><input type="radio" ng-model="type" value="square" /> Square</label>
-    <!--<label><input type="radio" ng-model="type" value="rectangle" /> Rectangle</label>-->
+    <label><input type="radio" ng-model="type" value="rectangle" /> Rectangle</label>
   </div>
   <div>
     <label><input type="checkbox" ng-model="changeOnFly" /> Change On Fly</label>
   </div>
-  <!--
+
   <div>
-    <label>Aspect Ratio: <input type="text" ng-model="aspectRatio" /></label>
+    <label>Aspect Ratio: <input type="text" ng-model="ctrl.aspectRatio" /></label>
   </div>
-  -->
+
   <div>
     <label>Area Min Size (Size = Width = Height): <input type="text" ng-model="selMinSize" /></label>
   </div>
@@ -93,8 +93,9 @@
               on-load-begin="onLoadBegin()"
               on-load-done="onLoadDone()"
               on-load-error="onLoadError()"
+              aspect-ratio="ctrl.aspectRatio"
     ></img-crop>
-              <!--aspect-ratio="aspectRatio"-->
+
   </div>
   moo:{{ctrl.moo}}
 
@@ -119,8 +120,8 @@
         $scope.resImgSize=200;
 
         this.moo = {};
+        this.aspectRatio = 1.91;
 
-        //$scope.aspectRatio=1.2;
         $scope.onChange=function() {
           console.log($scope.moo);
           console.log('onChange fired');

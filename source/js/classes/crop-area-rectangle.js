@@ -1,8 +1,9 @@
 'use strict';
 
 crop.factory('cropAreaRectangle', ['cropArea', function(CropArea) {
-  var CropAreaRectangle = function() {
+  var CropAreaRectangle = function( ctx, events, options ) {
     CropArea.apply(this, arguments);
+    this._aspectRatio = options.aspectRatio;
 
     this._resizeCtrlBaseRadius = 10;
     this._resizeCtrlNormalRatio = 0.75;
@@ -23,26 +24,41 @@ crop.factory('cropAreaRectangle', ['cropArea', function(CropArea) {
     this._areaIsHover = false;
     this._resizeCtrlIsDragging = -1;
     this._areaIsDragging = false;
+
+    this._drawArea = function(ctx,centerCoords,size){
+      console.log(this);
+      var hSize=size/2;
+      var wSize = hSize*this._aspectRatio;
+      var height = size;
+      var width = size*this._aspectRatio;
+
+      ctx.rect(centerCoords[0]-wSize,centerCoords[1]-hSize,width,height);
+    }.bind(this);
+
   };
 
   CropAreaRectangle.prototype = new CropArea();
 
   CropAreaRectangle.prototype._calcRectangleCorners=function() {
-    var hSize=this._size/2;
+
+    var hSize = this._size/2;
+    var wSize = hSize*this._aspectRatio;
+
     return [
-      [this._x-hSize, this._y-hSize],
-      [this._x+hSize, this._y-hSize],
-      [this._x-hSize, this._y+hSize],
-      [this._x+hSize, this._y+hSize]
+      [this._x-wSize, this._y-hSize],
+      [this._x+wSize, this._y-hSize],
+      [this._x-wSize, this._y+hSize],
+      [this._x+wSize, this._y+hSize]
     ];
   };
 
   CropAreaRectangle.prototype._calcRectangleDimensions=function() {
     var hSize=this._size/2;
+    var wSize = hSize*this._aspectRatio;
     return {
-      left: this._x-hSize,
+      left: this._x-wSize,
       top: this._y-hSize,
-      right: this._x+hSize,
+      right: this._x+wSize,
       bottom: this._y+hSize
     };
   };
@@ -66,12 +82,8 @@ crop.factory('cropAreaRectangle', ['cropArea', function(CropArea) {
     return res;
   };
 
-  CropAreaRectangle.prototype._drawArea=function(ctx,centerCoords,size){
-    var hSize=size/2;
-    ctx.rect(centerCoords[0]-hSize,centerCoords[1]-hSize,size,size);
-  };
-
   CropAreaRectangle.prototype.draw=function() {
+
     CropArea.prototype.draw.apply(this, arguments);
 
     // draw move icon

@@ -21,6 +21,8 @@
     "process": true,
     "crop": true,
     "CropHost": true,
-    "PubSub": true
+    "PubSub": true,
+    "window": true,
+    "document": true
   }
 }

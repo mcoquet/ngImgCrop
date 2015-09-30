@@ -1,6 +1,6 @@
 'use strict';
 
-crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'cropEXIF', function($document, CropAreaCircle, CropAreaSquare, cropEXIF) {
+crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'cropAreaRectangle', 'cropEXIF', function($document, CropAreaCircle, CropAreaSquare, CropAreaRectangle, cropEXIF) {
   /* STATIC FUNCTIONS */
 
   // Get Element's Offset
@@ -342,16 +342,26 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
     };
 
     this.setAreaType=function(type) {
+      debugger;
       var curSize=theArea.getSize(),
           curMinSize=theArea.getMinSize(),
           curX=theArea.getX(),
-          curY=theArea.getY();
+          curY=theArea.getY(),
+          AreaClass;
 
-      var AreaClass=CropAreaCircle;
-      if(type==='square') {
-        AreaClass=CropAreaSquare;
+      switch (type) {
+        case 'square':
+          AreaClass = CropAreaSquare;
+          break;
+        case 'rectangle':
+          AreaClass = CropAreaRectangle;
+          break;
+        default:
+          AreaClass = CropAreaCircle;
       }
-      theArea = new AreaClass(ctx, events);
+
+
+      theArea = new AreaClass( ctx, events, opts );
       theArea.setMinSize(curMinSize);
       theArea.setSize(curSize);
       theArea.setX(curX);
