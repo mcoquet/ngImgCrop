@@ -4,7 +4,7 @@
 
 'use strict';
 
-crop.service('cropEXIF', [function() {
+crop.service('cropEXIF', ["$http", "$q", function($http, $q) {
   var debug = false;
 
   var ExifTags = this.Tags = {
@@ -354,18 +354,12 @@ crop.service('cropEXIF', [function() {
                   fileReader.readAsArrayBuffer(blob);
               });
           } else {
-              var http = new XMLHttpRequest();
-              http.onload = function() {
-                  if (this.status == 200 || this.status === 0) {
-                      handleBinaryFile(http.response);
-                  } else {
-                      throw "Could not load image";
-                  }
-                  http = null;
-              };
-              http.open("GET", img.src, true);
-              http.responseType = "arraybuffer";
-              http.send(null);
+              $http ({ url: img.src, method:"GET", responseType: "arraybuffer" })
+              .then(function (response) {
+                handleBinaryFile(response.data);
+              },function () {
+                throw "Could not load image";
+              });
           }
       } else if (window.FileReader && (img instanceof window.Blob || img instanceof window.File)) {
           var fileReader = new FileReader();
