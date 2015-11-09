@@ -5,7 +5,7 @@
  * Copyright (c) 2015 Alex Kaul
  * License: MIT
  *
- * Generated at Wednesday, November 4th, 2015, 2:57:49 PM
+ * Generated at Monday, November 9th, 2015, 3:16:38 PM
  */
 (function() {
 'use strict';
@@ -1582,9 +1582,6 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
       events.trigger('image-updated');
       if(!!imageSource) {
         var newImage = new Image();
-        if(imageSource.substring(0,4).toLowerCase()==='http') {
-          newImage.crossOrigin = 'anonymous';
-        }
         newImage.onload = function(){
           events.trigger('load-done');
 
