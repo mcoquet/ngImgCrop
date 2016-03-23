@@ -2,8 +2,8 @@
 <html ng-app="app">
 <head>
   <title>ngImgCrop Test Page</title>
-  <script type="text/javascript" src="../bower_components/angular/angular.min.js"></script>
-  <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>-->
+  <!--script type="text/javascript" src="../bower_components/angular/angular.min.js"></script-->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
   <script type="text/javascript" src="../compile/unminified/ng-img-crop.js"></script>
   <link rel="stylesheet" href="../compile/unminified/ng-img-crop.css"/>
   <style>
@@ -40,16 +40,14 @@
     Area type:
     <label><input type="radio" ng-model="type" value="circle" /> Circle</label>
     <label><input type="radio" ng-model="type" value="square" /> Square</label>
-    <!--<label><input type="radio" ng-model="type" value="rectangle" /> Rectangle</label>-->
+    <label><input type="radio" ng-model="type" value="rectangle" /> Rectangle</label>
   </div>
   <div>
     <label><input type="checkbox" ng-model="changeOnFly" /> Change On Fly</label>
   </div>
-  <!--
   <div>
-    <label>Aspect Ratio: <input type="text" ng-model="aspectRatio" /></label>
+    <label>Aspect Ratio (Width / Height): <input type="text" ng-model="ratio" /></label>
   </div>
-  -->
   <div>
     <label>Area Min Size (Size = Width = Height): <input type="text" ng-model="selMinSize" /></label>
   </div>
@@ -93,10 +91,11 @@
               on-load-begin="onLoadBegin()"
               on-load-done="onLoadDone()"
               on-load-error="onLoadError()"
+              aspect-ratio="ratio"
     ></img-crop>
-              <!--aspect-ratio="aspectRatio"-->
   </div>
-  moo:{{ctrl.moo}}
+  <p>moo:{{ctrl.moo}}</p>
+  <p>ratio: {{ctrl.moo.cropImageWidth / ctrl.moo.cropImageHeight}}</p>
 
   <div style="text-align:center">
     <h3>Result</h3>
@@ -110,17 +109,17 @@
       .controller('Ctrl', function($scope) {
 
         $scope.size='small';
-        $scope.type='circle';
+        $scope.type='rectangle';
         $scope.imageDataURI='';
         $scope.resImageDataURI='';
         $scope.resImgFormat='image/png';
         $scope.resImgQuality=1;
         $scope.selMinSize=100;
         $scope.resImgSize=200;
+        $scope.ratio=1.91;
 
         this.moo = {};
 
-        //$scope.aspectRatio=1.2;
         $scope.onChange=function() {
           console.log($scope.moo);
           console.log('onChange fired');
