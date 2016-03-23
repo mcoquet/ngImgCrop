@@ -6,14 +6,15 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
     scope: {
       image: '=',
       resultImage: '=',
-      cropCoords: '=',
+      cropCoords: '=?',
 
-      changeOnFly: '=',
+      changeOnFly: '=?',
       areaType: '@',
-      areaMinSize: '=',
-      resultImageSize: '=',
+      areaMinSize: '=?',
+      resultImageSize: '=?',
       resultImageFormat: '@',
-      resultImageQuality: '=',
+      resultImageQuality: '=?',
+      aspectRatio: '=?',
 
       onChange: '&',
       onLoadBegin: '&',
@@ -40,10 +41,35 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
           storedResultImage=resultImage;
           if(angular.isDefined(scope.resultImage)) {
             scope.resultImage=resultImage;
-            scope.cropCoords = cropHost.cropCoords;
           }
           scope.onChange({$dataURI: scope.resultImage});
         }
+      };
+
+      var updateAreaCoords = function (scope) {
+        var areaCoords = cropHost.getAreaCoords();
+        scope.areaCoords = areaCoords;
+      };
+
+      var updateCropCoords = function (scope) {
+        var areaCoords = cropHost.getAreaCoords();
+
+        var dimRatio = {
+          x: cropHost.getArea().getImage().width / cropHost.getArea().getCanvasSize().w,
+          y: cropHost.getArea().getImage().height / cropHost.getArea().getCanvasSize().h
+        };
+
+        scope.cropCoords = {
+          areaCoords: areaCoords,
+          cropWidth: areaCoords.w,
+          cropHeight: areaCoords.h,
+          cropTop: areaCoords.y,
+          cropLeft: areaCoords.x,
+          cropImageWidth: Math.round(areaCoords.w * dimRatio.x),
+          cropImageHeight: Math.round(areaCoords.h * dimRatio.y),
+          cropImageTop: Math.round(areaCoords.y * dimRatio.y),
+          cropImageLeft: Math.round(areaCoords.x * dimRatio.x)
+        };
       };
 
       // Wrapper to safely exec functions within $apply on a running $digest cycle
@@ -72,9 +98,11 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
           if(!!scope.changeOnFly) {
             updateResultImage(scope);
           }
+          updateCropCoords(scope);
         }))
         .on('area-move-end area-resize-end image-updated', fnSafeApply(function(scope){
           updateResultImage(scope);
+          updateCropCoords(scope);
         }));
 
       // Sync CropHost with Directive's options
@@ -100,6 +128,12 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
       scope.$watch('resultImageQuality',function(){
         cropHost.setResultImageQuality(scope.resultImageQuality);
         updateResultImage(scope);
+      });
+      scope.$watch('aspectRatio', function(){
+        if (typeof scope.aspectRatio == 'string' && scope.aspectRatio != '') {
+          scope.aspectRatio = parseInt(scope.aspectRatio);
+        }
+        if (scope.aspectRatio) cropHost.setAspect(scope.aspectRatio);
       });
 
       // Update CropHost dimensions when the directive element is resized

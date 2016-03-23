@@ -4,3 +4,6 @@
 # Installed Bower/Node modules
 bower_components/
 node_modules/
+
+# IDE env
+/.idea
