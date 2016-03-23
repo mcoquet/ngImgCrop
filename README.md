@@ -111,8 +111,9 @@ The following code enables to select an image using a file input and crop it. Th
     image="{string}"
     result-image="{string}"
    [change-on-fly="{boolean}"]
-   [area-type="{circle|square}"]
+   [area-type="{circle|square|rectangle}"]
    [area-min-size="{number}"]
+   [aspect-ratio="number"]
    [result-image-size="{number}"]
    [result-image-format="{string}"]
    [result-image-quality="{number}"]
@@ -142,6 +143,10 @@ Assignable angular expression to data-bind to. NgImgCrop puts a data uri of a cr
 ### area-min-size
 
 *Optional*. Min. width/height of the crop area (in pixels). Default: 80.
+
+### aspect-ratio
+
+*Optional*. width/height ratio of the crop area.
 
 ### result-image-size
 
