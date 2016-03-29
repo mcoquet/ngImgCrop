@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Alex Kaul
  * License: MIT
  *
- * Generated at Wednesday, March 23rd, 2016, 3:27:25 PM
+ * Generated at Tuesday, March 29th, 2016, 4:26:00 PM
  */
 (function() {
 'use strict';
@@ -2685,10 +2685,7 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
       var updateResultImage=function(scope) {
         var resultImage=cropHost.getResultImageDataURI();
         if(storedResultImage!==resultImage) {
-          storedResultImage=resultImage;
-          if(angular.isDefined(scope.resultImage)) {
-            scope.resultImage=resultImage;
-          }
+          scope.resultImage = storedResultImage = resultImage;
           scope.onChange({$dataURI: scope.resultImage});
         }
       };

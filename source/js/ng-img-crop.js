@@ -38,10 +38,7 @@ crop.directive('imgCrop', ['$timeout', 'cropHost', 'cropPubSub', function($timeo
       var updateResultImage=function(scope) {
         var resultImage=cropHost.getResultImageDataURI();
         if(storedResultImage!==resultImage) {
-          storedResultImage=resultImage;
-          if(angular.isDefined(scope.resultImage)) {
-            scope.resultImage=resultImage;
-          }
+          scope.resultImage = storedResultImage = resultImage;
           scope.onChange({$dataURI: scope.resultImage});
         }
       };
