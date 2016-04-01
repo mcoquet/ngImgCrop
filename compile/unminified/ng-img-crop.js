@@ -5,7 +5,7 @@
  * Copyright (c) 2016 Alex Kaul
  * License: MIT
  *
- * Generated at Tuesday, March 29th, 2016, 4:26:00 PM
+ * Generated at Friday, April 1st, 2016, 4:44:03 PM
  */
 (function() {
 'use strict';
@@ -2033,7 +2033,7 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
     var ctx=null,
         image=null,
         theArea=null,
-        initMax = null,
+        initMax = true,
         isAspectRatio = null,
         self = this;
 
@@ -2088,9 +2088,19 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
     var resetCropHost = function() {
       if (image !== null) {
         theArea.setImage(image);
+
+        var areaType = self.getAreaType(); // use `aspectRatio` instead of `resImgSize` dimensions bc `resImgSize` can be 'selection' string
+        var aspectRatio = theArea.getAspect();
+
         var imageDims = [image.width, image.height],
           imageRatio = image.width / image.height,
           canvasDims = imageDims;
+
+        // hack to fix re-crop of the image that is already cropped (happenning with the rectangle area type)
+        var incorrectImageDims = !image.src.match(/^http/) && areaType == 'rectangle' && imageRatio == 1 && image.width == 200;
+        if (incorrectImageDims) {
+          imageRatio = aspectRatio;
+        }
 
         if (canvasDims[0] > maxCanvasDims[0]) {
           canvasDims[0] = maxCanvasDims[0];
@@ -2114,18 +2124,18 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
         var cw = ctx.canvas.width;
         var ch = ctx.canvas.height;
 
-        var areaType = self.getAreaType();
         // enforce 1:1 aspect ratio for square-like selections
         if ((areaType === 'circle') || (areaType === 'square')) {
           if(ch < cw) cw = ch;
           else ch = cw;
-        }else if(areaType === 'rectangle' && isAspectRatio){
-          var aspectRatio = theArea.getAspect(); // use `aspectRatio` instead of `resImgSize` dimensions bc `resImgSize` can be 'selection' string
-          if(cw/ch > aspectRatio){
-            cw = aspectRatio * ch;
-          }else{
-            ch = aspectRatio * cw;
-          }
+        } else if (areaType === 'rectangle' && isAspectRatio && !incorrectImageDims){
+          cw = aspectRatio * ch;
+        }
+
+        // the second part of the hack
+        if (incorrectImageDims) {
+          image.width = cw;
+          image.height = ch;
         }
 
         if(initMax){
